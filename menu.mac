@@ -1,0 +1,416 @@
+	RAM=01000
+	ROM=0120000
+	
+	.macro WORD sym
+	.ifndef BSSPOS
+BSSPOS	= RAM
+	.endif
+\sym	= BSSPOS
+BSSPOS	= BSSPOS+2
+	.endm
+	
+	.macro PUSH3
+	mov	r0,-(r6)
+	mov	r1,-(r6)
+	mov	r2,-(r6)
+	.endm
+	
+	.macro	POP3
+	mov	(r6)+,r2
+	mov	(r6)+,r1
+	mov	(r6)+,r0
+	.endm
+	
+	.macro PUSH4
+	PUSH3
+	mov	r3,-(r6)
+	.endm
+	
+	.macro	POP4
+	mov	(r6)+,r3
+	POP3
+	.endm
+	
+	.bss
+	WORD pmenud		# pointer to menu data storage
+	WORD pcnt		# pointer to contents
+	WORD ocnt		# offset to contents from start of ROM
+
+	WORD pcmenu		# pointer to current menu
+	WORD nitems		# number of items in menu
+	WORD itemsa		# address of items array
+	WORD first		# first shown item
+	WORD sel		# selected item
+
+
+	#these two should be the last
+	WORD pfinfo	# pointer to files info
+	WORD flst	# storage for sorted file list
+
+
+	.text
+start:	emt	014		# clear screen
+	movb	255,@$040	# 32 symbols/line mode
+	movb	$2,@$0162	# symbol step 2
+	movb	255,@$056	# hide cursor
+	jsr	pc,cls
+	mov	$data,r2
+	mov	$5,r3		#page
+	mov	$pfinfo,r4
+	jsr	pc,inflate
+	bit	$1,r4
+	beq	0f
+	inc	r4
+0:	mov	r4,r0
+	add	$2,r0
+	mov	r0,@$pmenud
+	mov	@$(flst-2),r0	# offset to file info
+	mov	$flst,r1
+	add	r1,r0
+	mov	r0,@$pfinfo
+	jsr	pc,inflate
+	mov	r2,@$pcnt
+	sub	$0xa000,r2
+	mov	r2,@$ocnt
+	mov	@$pmenud,r0
+	add	-2(r0),r0	# offset to top level menu is in word before menu data buffer
+	
+	jsr	pc,setmn
+	
+mainl:	emt	6		# get key
+
+kup:	cmp	r0,$032
+	bne	kdown
+	mov	@$sel,r0
+	tst	r0
+	beq	mainl
+	dec	r0
+	mov	r0,@$sel
+	cmp	r0,@$first
+	bge	0f
+	mov	r0,@$first
+	jsr	pc,pmenu
+	br	mainl
+0:	jsr	pc,getly
+	jsr	pc,pline
+	inc	r0
+	inc	r2
+	jsr	pc,pline
+	br	mainl
+	
+kdown:	cmp	r0,$033		
+	bne	kent
+	mov	@$sel,r0
+	mov	@$nitems,r1
+	dec	r1
+	cmp	r0,r1
+	bge	mainl
+	inc	r0
+	mov	r0,@$sel
+	mov	@$first,r1
+	add	$23,r1
+	cmp	r0,r1
+	ble	1f
+	inc	@$first
+	jsr	pc,pmenu
+	br	mainl
+1:	jsr	pc,getly
+	jsr	pc,pline
+	dec	r0
+	dec	r2
+	jsr	pc,pline
+	br	mainl
+
+kent:	cmp	r0,$012
+	bne	kesc
+	mov	@$sel,r0
+	jsr	pc,getla
+	cmp	r1,@$pmenud	# file or dir?
+	blt	1f	
+	mov	r1,r0	# dir, open it
+	jsr	pc,setmn
+	br	mainl
+1:	tstb	(r1)+		# file, load it
+	bne	1b
+	bit	$1,r1
+	beq	2f
+	inc	r1
+2:	mov	(r1)+,r4	# adr
+	mov	r4,@$0264
+	mov	(r1)+,@$0266	#size
+	mov	(r1)+,r2	#offset into content lo word
+	movb	(r1)+,r3	#offset into content hi byte
+	add	@$ocnt,r2	#offset into ROM lo word
+	adc	r3		#offset into ROM hi byte
+	mov	r2,r0
+	mov	$4,r5
+3:	asl	r0		#get page into r3
+	rol	r3
+	sob	r5,3b
+	swab	r3		#page in hi byte
+	bic	$0xf000,r2	#offset into page
+	cmp	r3,$0x400
+	ble	4f
+	bis	$0xe000,r2	#address
+	mov	r3,@$ROM
+	br	5f
+4:	mov	r3,r0
+	asl	r0
+	asl	r0
+	asl	r0
+	asl	r0
+	add	r0,r2
+	add	$0xa000,r2
+	mov	$0x400,r3
+5:	jsr	pc,inflate
+	mov	@$0264,r7
+
+kesc:	cmp	r0,$030
+	bne	mainl
+	mov	@$pmenud,r0	# just return to top for now
+	add	-2(r0),r0	# offset to top level menu is in word before menu data buffer	
+	jsr	pc,setmn
+	br 	mainl
+
+	
+	# reset current menu to addr in r0
+setmn:	mov	r0,@$pcmenu
+	clr	@$first
+	clr	@$sel
+	jsr	pc,pmenu
+	rts	pc
+	
+done:	br	done
+
+	# print menu screen for menu pointed by pcmenu
+	# also init menu values
+pmenu:	jsr	pc,cls
+	mov	@$pcmenu,r2
+	jsr	pc,w2sl
+	bit	$1,r2
+	beq	0f
+	inc	r2
+0:	mov	(r2)+,r1
+	mov	r1,@$nitems
+	mov	r2,@$itemsa
+	clr	r2		# screen line
+	mov	@$first, r0
+	sub	r0,r1		# number of lines to print
+	ble	9f
+	cmp	r1,$24
+	blt	1f
+	mov	$24,r1	
+1:	jsr	pc,pline
+	inc	r0
+	inc	r2
+	sob	r1,1b
+9:	rts	pc
+
+	#return in r2 screen line for menu line r0
+	# no checks for r0 on screen!!
+getly:	mov	@$first,r2
+	sub	r0,r2
+	neg	r2
+	rts	pc
+
+	# print menu line r0 at screen line r2
+pline:	PUSH3
+	mov	$0222,r0	# set text color green
+	emt	016
+	mov	4(r6),r0
+	clr	r1
+	emt	024	# set cursor position to line r2
+	clr	r1
+	cmp	@$sel,r0
+	bne	0f
+	dec	r1
+0:	movb	r1,@$045
+	mov	$32,r2
+	jsr	pc,getla
+	cmp	r1,@$pmenud	# file or dir?
+	blt	1f	
+	movb	$255,@$044	# dir, unerline it
+	br	2f
+1:	movb	$0,@$044	# file, remove underlining
+2:	emt	020
+	POP3
+	rts	pc
+
+	# get address of menu line r0 in r1
+	# no range checks!!
+getla:	mov	@$itemsa,r1
+	add	r0,r1
+	add	r0,r1
+	mov	(r1),r1
+	bit	$0x8000,r1
+	beq	0f
+	bic	$0x8000,r1
+	add	@$pmenud,r1
+	rts	pc
+0:	add	@$pfinfo,r1
+	rts	pc
+
+	# clear screen
+cls:	clr	r0
+	mov	$0x2000,r1
+	mov	$0x4000,r2
+0:	mov	r0,(r2)+
+	sob	r1,0b
+	rts	pc
+	
+	# print into status line c-string pointed by r2
+	# on return r2 points after the end of string
+w2sl:	mov	$0223,r0	# set text color
+	emt	016
+	movb	$255,@$044	# turn on underline
+	clr	r1
+	mov	$1,r0
+0:	movb	(r2),r0
+	tstb	r0
+	bne	1f
+	movb	$32,r0
+	br	2f
+1:	inc	r2
+2:	emt	022
+	inc	r1
+	cmp	r1,$31
+	ble	0b
+	inc	r2
+	rts	pc	
+
+	#r0,r1 scratch
+	#r2 input address
+	#r3 input page
+	#r4 dest address
+	#r5 bitstream -- (bits|bitcount)
+inflate:jsr	pc,getbyte
+	movb	r0,(r4)+ #save first byte
+	jsr	pc,getbyte
+	mov	r0,r5
+	swab	r5
+	bisb	$0xff,r5
+	
+iloop:	movb	$1,r1
+	jsr	pc,getbits
+	tst	r0
+	beq	0f
+	jsr	pc,getbyte
+	movb	r0,(r4)+
+	br	iloop
+		# lz code
+0:	movb	$2,r1
+	jsr	pc,getbits
+	tst	r0
+	bne	1f
+		# case 000
+	movb	$3,r1
+	jsr	pc,getbits
+	bis	$0xfff8,r0
+	movb	$1,r1
+	jsr	pc,repeat
+	br	iloop
+	
+1:	cmpb	$1,r0
+	bne	2f
+		# case 001
+	jsr	pc,getbyte
+	bis	$0xff00,r0
+	movb	$2,r1
+	jsr	pc,repeat
+	br	iloop
+	
+2:	cmpb	$2,r0
+	bne	3f
+		# case 010
+	jsr	pc,bigdisp
+	movb	$3,r1
+	jsr	pc,repeat
+	br	iloop
+		# case 011
+3:	clr	r1
+4:	mov	r1,-(r6)
+	mov	$1,r1
+	jsr	pc,getbits
+	mov	(r6)+,r1
+	inc	r1
+	tst	r0
+	beq	4b
+	cmp	r1,$9
+	bne	5f
+	clr	r0
+	rts	pc
+5:	cmp	r1,$7
+	ble	6f
+	mov	$0xffff,r0
+	rts	pc
+6:	mov	r1,-(r6)
+	movb	$1,r0
+7:	asl	r0
+	sob	r1,7b
+	mov	(r6)+,r1
+	mov	r0,-(r6)
+	jsr	pc,getbits
+	mov	(r6)+,r1
+	add	r1,r0
+	add	$2,r0
+	mov	r0,-(r6)
+	jsr	pc,bigdisp
+	mov	(r6)+,r1
+	jsr	pc,repeat
+	br	iloop
+
+	#return in r0 'big' displacement (-1..-4352)
+bigdisp:movb	$1,r1
+	jsr	pc,getbits
+	tst	r0
+	beq	1f
+		# longer disp
+	movb	$4,r1
+	jsr	pc,getbits
+	mov	r0,r1
+	jsr	pc,getbyte
+	bic	$0xff00,r0
+	swab	r1
+	bic	$0xff,r1
+	bis	$0xf000,r1
+	sub	$0x100,r1
+	bis	r1,r0
+	rts	pc
+1:		# shorter disp
+	jsr	pc,getbyte
+	bis	$0xff00,r0
+	rts	pc
+		
+	#repeat r1 times byte at disp r0 
+repeat:	add	r4,r0
+0:	movb	(r0)+,(r4)+
+	sob	r1,0b
+	rts	pc
+
+	#get r1 bits from bitstream buffered in r5 into r0
+getbits:clr	r0
+1:	tstb	r5
+	bne	2f
+	mov	r0,-(r6)
+	jsr	pc,getbyte
+	mov	r0,r5
+	swab	r5
+	bis	$0xff,r5
+	mov	(r6)+,r0
+2:	asl	r5
+	rol	r0
+	sob	r1,1b
+	rts	pc
+	
+getbyte:movb	(r2)+,r0
+	cmp	r2,$0xf000 #check if end of page
+	bne	1f
+	add	$0x100,r3
+	mov	r3,@$ROM
+	mov	$0xe000,r2
+1:	rts pc
+	.even
+
+data	= .+ROM		# start of data
+pcfdl	= data		# pointer to compressed file data
+pcfd	= pcfdl+2	# pointer to compressed file data
