@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8
 import os
 import subprocess
 import traceback
@@ -6,6 +7,13 @@ import struct
 import operator
 import optparse
 import sys
+import codecs
+
+encoding_map = codecs.make_identity_dict(range(256))
+pairs = zip(range(0xc0)+[ord(c) for c in u'юабцдефгхийклмнопярстужвьызшэщчъЮАБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЫЗШЭЩЧЪ'],range(255))
+encoding_map.update(dict( (utf, koi) for (utf, koi) in pairs))
+def koi(s):
+	return codecs.charmap_encode(s.decode('utf-8'),'strict',encoding_map)[0]
 
 def compress(data):
 	uf='uncompressed.content'
@@ -37,16 +45,14 @@ def processFile(fpath):
 		cnt=f.read()
 	(name,ext)=os.path.splitext(os.path.basename(fpath))
 	ext=ext.upper()
-	if ext == '.BIN': # binary (assembler)
-		res = processTape(cnt)
-		res['type']='i'
-	elif ext == '.COD': # basic file
+	if ext == '.COD': # basic file
 		res = processTape(cnt)
 		res['type']='b' 
-	else:
-		sys.exit('Type of file is unknown: '+ fpath)
+	else: # for everything else assume binary tape
+		res = processTape(cnt)
+		res['type']='i'
 		
-	res['name'] = name
+	res['name'] = koi(name)
 	print '%5d %5d %s'%(res['size'],len(res['cnt']),fpath)
 	return res
 
@@ -64,7 +70,7 @@ def processDir(path):
 				exit("Error while processing %s: %s"%(ipath,traceback.format_exc()))
 		if os.path.isdir(ipath):
 			menu['dirs'].append(processDir(ipath))
-	menu['name']=os.path.basename(path)
+	menu['name']=koi(os.path.basename(path))
 	return menu
 
 def l3b(l):
@@ -82,7 +88,7 @@ def writeDir(info):
 		writeDir(d)
 	global gMenu
 	info['ofs'] = len(gMenu)
-	print '%s: %d dirs %d files'%(info['name'],len(info['dirs']),len(info['files']))
+	#print '%s: %d dirs %d files'%(info['name'],len(info['dirs']),len(info['files']))
 	gMenu += cstr(info['name']) + struct.pack('<H',len(info['dirs'])+len(info['files']))
 	info['dirs'].sort(key=operator.itemgetter('name'))
 	for d in info['dirs']:
@@ -123,6 +129,7 @@ def makeROM(items):
 		ldr = f.read()
 	rom = ldr+cfdata+cmenu+content
 	return rom
+
 
 def main():
 	usage = '%prog [options]'
