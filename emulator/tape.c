@@ -220,7 +220,7 @@ void fake_read_strobe() {
 		}
 		bit = (curbyte >> ((bitnum++) & 7)) & 1;
 		if (bitnum == 16) {
-			fprintf(stderr, _("File address will be %o\n"), curaddr);
+			fprintf(stderr, _("File address will be %o(0x%x)\n"), curaddr, curaddr);
 			fake_state = Len;
 			bitnum = 0;
 		}
@@ -233,7 +233,7 @@ void fake_read_strobe() {
                 }
 		bit = (curbyte >> ((bitnum++) & 7)) & 1;
 		if (bitnum == 16) {
-			fprintf(stderr, _("File length will be %o\n"), curlen);
+			fprintf(stderr, _("File length will be %o (0x%x)\n"), curlen, curlen);
                         fake_state = Name;
                         bitnum = 0;
                 }

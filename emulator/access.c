@@ -59,17 +59,9 @@ int q_null(), q_err(c_addr, d_word), q_errb(c_addr, d_byte),
 int secret_read(c_addr, d_word*), secret_write(c_addr, d_word), secret_bwrite(c_addr, d_byte);
 int force_read( c_addr, d_word*), terak_read(c_addr, d_word*);
 
-typedef struct {
-	c_addr start;
-	c_addr size;
-	int (*ifunc)();
-	int (*rfunc)(c_addr, d_word*);
-	int (*wfunc)(c_addr, d_word);
-	int (*bwfunc)(c_addr, d_byte);
-} pdp_qmap;
-
 pdp_qmap qmap_bk[] = {
 	{ PORT_REG, PORT_SIZE, q_null, port_read, port_write, port_bwrite },
+	{ 2, 0, 0, 0, 0, 0 }, // Reserved for paged rom
 	{ TTY_REG, TTY_SIZE, tty_init, tty_read, tty_write, tty_bwrite },
 	{ IO_REG, IO_SIZE, io_init, io_read, io_write, io_bwrite },
 	{ TIMER_REG, TIMER_SIZE, timer_init, timer_read, timer_write, timer_bwrite },
@@ -84,6 +76,7 @@ pdp_qmap qmap_bk[] = {
 	{ DISK_REG, DISK_SIZE, disk_init, disk_read, disk_write, disk_bwrite },
 
 	{ SECRET_REG, SECRET_SIZE, q_null, secret_read, secret_write, secret_bwrite },
+	
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
@@ -148,6 +141,7 @@ pdp_qmap q_synth = {
 pdp_qmap q_bkplip = {
 	PORT_REG, PORT_SIZE, bkplip_init, bkplip_read, bkplip_write, bkplip_bwrite
 };
+
 void plug_printer() { qmap[0] = q_printer; }
 void plug_mouse() { qmap[0] = q_mouse; }
 void plug_covox() { qmap[0] = q_covox; }
@@ -353,7 +347,8 @@ d_word word;
 			return (qmap[i].wfunc)( addr, word );
 		}
 	}
-	fprintf(stderr, _("@%06o Illegal write address %06o:"), pdp.regs[PC], addr);
+	//fprintf(stderr, _("@%06o Illegal write address %06o:"), pdp.regs[PC], addr);
+	fprintf(stderr, _("@%04x Illegal write address %04x:"), pdp.regs[PC], addr);
 	return BUS_ERROR;
 }
 
@@ -530,7 +525,8 @@ q_reset()
 	int i;
 
 	for ( i = 0; qmap[i].start; ++i ) {
-		(qmap[i].ifunc)();
+		if (qmap[i].ifunc)
+			(qmap[i].ifunc)();
 	}
 }
 

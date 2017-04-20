@@ -123,6 +123,14 @@ void load_rom11(d_word * rom, int byte_off, char * rompath, int byte_size) {
         fprintf(stderr, _("Done.\n"));
 }
 
+void loadBasicRom() {
+	/* Basic or Focal ROM may be 24448 to 24576 bytes */
+	load_rom(0120000, rompath12, 24448, 24576);
+	
+	/* Disk controller BIOS is exactly 4k */
+	load_rom(0160000, rompath16, 4096, 4096);
+}
+
 int
 boot_init()
 {
@@ -148,9 +156,11 @@ boot_init()
 	/* Monitor must be exactly 8k */
 	load_rom(0100000, rompath10, 8192, 8192);
 
-        /* Basic or Focal ROM may be 24448 to 24576 bytes */
-        load_rom(0120000, rompath12, 24448, 24576);
-
-	/* Disk controller BIOS is exactly 4k */
-        load_rom(0160000, rompath16, 4096, 4096);
+	if (prompath && *prompath) {
+		prom_init();
+		return;
+	}
+	
+	loadBasicRom();        
+    
 }

@@ -38,6 +38,16 @@
 #define TRUE	1
 
 #define isoct(c)	(((c) >= '0') && ((c) <= '7'))
+#define ishex(c)	((((c) >= '0') && ((c) <= '9')) || ((toupper(c)>='A') && (toupper(c)<='F')))
+
+char hex(char c) {
+	c = toupper(c);
+	if (c >= 'A')
+		c=c-'A'+10;
+	else
+		c-='0';
+	return c;
+}
 
 
 int ui_done;
@@ -155,8 +165,10 @@ int *good;
 	while( !isspace( *s ) && ( *s != '\0' )) {
 		if ( *good == EMPTY )
 			*good = 0;
-		if ( isoct( *s )) {
-			*v = ( *v << 3 ) + ( *s - '0' );
+		//if ( isoct( *s )) {
+			//*v = ( *v << 3 ) + ( *s - '0' );
+		if ( ishex( *s )) {
+			*v = ( *v << 4 ) + hex(*s);
 			(*good)++;
 		} else {
 			*good = FALSE;
@@ -187,8 +199,10 @@ int *good;
 	while( !isspace(*s) && ( *s != '\0' )) {
 		if ( *good == EMPTY )
 			*good = 0;
-		if ( isoct( *s )) {
-			*v = ( *v << 3 ) + ( *s - '0' );
+		//if ( isoct( *s )) {
+			//*v = ( *v << 3 ) + ( *s - '0' );
+		if ( ishex( *s )) {
+			*v = ( *v << 4 ) + hex( *s );
 			(*good)++;
 		} else {
 			*good = FALSE;
@@ -199,6 +213,9 @@ int *good;
 	return s;
 }
 
+char pchar(unsigned char c) {
+	return (c>32 && c<127)?c:'.';
+}
 
 /*
  * ui_dump() - Hex dump of memory.
@@ -239,17 +256,25 @@ char *s;
 	addr &= 0177777;
 	last &= 0177777;
 
+	char ss[33];
+	int sofs=0;
+	ss[32]=0;
 	for( ; addr != last; addr = (addr + 2) & 0177777 ) {
-		if (( count % DWIDTH ) == 0 ) {
-			printf( "%06o: ", addr );
+		if (( count % 16 ) == 0 ) {
+			//printf( "%06o: ", addr );
+			printf( "%04x: ", addr );
 		}
 		if ( lc_word( addr, &word ) == OK ) {
-			printf( "%06o ", word );
+			//printf( "%06o ", word );
+			printf( "%02x %02x ", word&0xff, word>>8 );
+			ss[sofs++]=pchar(word&0xff);
+			ss[sofs++]=pchar(word>>8);
 		} else {
 			printf( "XXXXXX " );
 		}
-		if (( count % DWIDTH ) == ( DWIDTH - 1 )) {
-			putchar( '\n' );
+		if (( count % 16 ) == ( 16 - 1 )) {
+			printf("  %s\n",ss);
+			sofs=0;
 		}
 		++count;
 	}
@@ -280,9 +305,11 @@ char *s;
 
 	do {
 		addr &= 0777777;
-		printf( "%06o=", addr );
+		//printf( "%06o=", addr );
+		printf( "%04x=", addr );
 		if ( lc_word( addr, &word ) == OK ) {
-			printf( "%06o ", word );
+			//printf( "%06o ", word );
+			printf( "%04x ", word );
 		} else {
 			printf( "XXXXXX " );
 		}
@@ -311,6 +338,14 @@ char *s;
 			case '5':
 			case '6':
 			case '7':
+			case '8':
+			case '9':
+			case 'a':
+			case 'b':
+			case 'c':
+			case 'd':
+			case 'e':
+			case 'f':
 				rd_d_word( t, &word, &good );
 				if ( good == FALSE ) {
 					fprintf(stderr, _("Bad address\n"));
@@ -372,7 +407,8 @@ ui_breakpoint(s)
 char *s;
 {
 	int addr;
-	if (1 != sscanf(s, "%o", &addr)) {
+	//if (1 != sscanf(s, "%o", &addr)) {
+	if (1 != sscanf(s, "%x", &addr)) {
 		fprintf(stderr, _("Bad address\n"));
 		breakpoint = -1;
 		return;
@@ -386,11 +422,14 @@ char *s;
 
 ui_registers()
 {
-	printf( "R0-R4: %06o %06o %06o %06o\n",
+	//printf( "R0-R3: %06o %06o %06o %06o\n",
+	printf( "R0-R3: %04x %04x %04x %04x\n",
 		pdp.regs[0], pdp.regs[1], pdp.regs[2], pdp.regs[3] );
-	printf( "R5-R7: %06o %06o %06o %06o\n",
+	//printf( "R4-R7: %06o %06o %06o %06o\n",
+	printf( "R4-R7: %04x %04x %04x %04x\n",
 		pdp.regs[4], pdp.regs[5], pdp.regs[6], pdp.regs[7] );
-	printf( "PSW: %06o [", pdp.psw );
+	//printf( "PSW: %06o [", pdp.psw );
+	printf( "PSW: %04x [", pdp.psw );
 	if ( pdp.psw & 010 ) putchar( 'N' );
 	if ( pdp.psw & 04 ) putchar( 'Z' );
 	if ( pdp.psw & 02 ) putchar( 'V' );

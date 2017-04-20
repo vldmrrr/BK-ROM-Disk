@@ -126,7 +126,8 @@ void printop(unsigned rm, c_addr * a, char **destp) {
 			lc_word(*a, &word);
 			*a += 2;
 			*a &= 0177777;
-			sprintf(*destp, "#%o", word);
+			//sprintf(*destp, "#%o", word);
+			sprintf(*destp, "$0x%x", word);
 		} else {
 			sprintf(*destp, "(%s)+", regnam[r]);
 		}
@@ -145,9 +146,11 @@ void printop(unsigned rm, c_addr * a, char **destp) {
 		*a += 2;
 		*a &= 0177777;
 		if (r == 7) {
-			sprintf(*destp, "%o", (*a + word) & 0177777);
+			//sprintf(*destp, "%o", (*a + word) & 0177777);
+			sprintf(*destp, "0x%x", (*a + word) & 0177777);
 		} else {
-			sprintf(*destp, "%o(%s)", word, regnam[r]);
+			//sprintf(*destp, "%o(%s)", word, regnam[r]);
+			sprintf(*destp, "0x%x(%s)", word, regnam[r]);
 		}
 	}
 	*destp += strlen(*destp);
@@ -177,14 +180,16 @@ c_addr disas (c_addr a, char * dest) {
 				code = decode750[(inst >> 3) & 3];
 			break; 
 	}
-	sprintf(dest, "%06o: %s ", a - 2, code + !!isupper(*code));
+	//sprintf(dest, "%06o: %s ", a - 2, code + !!isupper(*code));
+	sprintf(dest, "%04x: %s ", a - 2, code + !!isupper(*code));
 
 	if (isupper(*code)) {
 		dest += strlen(dest);
 		switch (*code) {
 		case 'B':
 			soffset = inst;
-			sprintf(dest, "%06o", a + 2 * soffset);
+			//sprintf(dest, "%06o", a + 2 * soffset);
+			sprintf(dest, "%04x", a + 2 * soffset);
 			break;
 		case 'F':
 			sprintf(dest, "(%s)", regnam[inst & 7]);
@@ -193,7 +198,8 @@ c_addr disas (c_addr a, char * dest) {
 			sprintf(dest, "%s, ", regnam[(inst >> 6) & 7]);
 			uoffset = inst & 077;
 			dest += strlen(dest);
-			sprintf(dest, "%06o", a - 2 * uoffset);
+			//sprintf(dest, "%06o", a - 2 * uoffset);
+			sprintf(dest, "%04x", a - 2 * uoffset);
 			break;
 		case 'G':
 			printop((inst >> 6) & 077, &a, &dest);
@@ -209,13 +215,15 @@ c_addr disas (c_addr a, char * dest) {
 			printop(inst & 077, &a, &dest);
 			break;
 		case 'T':
-			sprintf(dest, "%o", inst & 0377);
+			sprintf(dest, "0%o", inst & 0377);
 			break;
 		case 'U':
-			sprintf(dest, "%o", inst & 077);
+			//sprintf(dest, "%o", inst & 077);
+			sprintf(dest, "0x%x", inst & 077);
 			break;
 		case 'N':
-			sprintf(dest, "%06o", inst);
+			//sprintf(dest, "%06o", inst);
+			sprintf(dest, "%04x", inst);
 			break;
 		default: sprintf(dest, _("ERROR code %c"), *code);
 	}}

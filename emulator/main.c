@@ -63,6 +63,7 @@ char * bos11extrom = "B11M_EXT.ROM";
 char * basic11arom = "BAS11M_0.ROM";
 char * basic11brom = "BAS11M_1.ROM";
 
+char * prompath = 0;
 char * rompath10 = 0;
 char * rompath12 = 0;
 char * rompath16 = 0;
@@ -129,6 +130,7 @@ char **argv;
 		fprintf( stderr, _("   -v        Enable Covox\n") );
 		fprintf( stderr, _("   -y        Enable AY-3-8910\n") );
 		fprintf( stderr, _("   -m        Enable mouse\n") );
+		fprintf( stderr, _("   -P<file>  Specify a paged ROM file @ 120000.\n") );
 		fprintf( stderr, _("   -S        Full speed mode\n") );
 		fprintf( stderr, _("   -s        \"TURBO\" mode (Real overclocked BK)\n") );
 		fprintf( stderr, _("   -R<file>  Specify an alternative ROM file @ 120000.\n") );
@@ -164,8 +166,10 @@ by the environment variable BK_PATH.\n"), romdir );
 		break;
 	case 1: /* BK0010.01 */
 		rompath10 = monitor10rom;
-		rompath12 = basic10rom;
-		rompath16 = 0;
+		if (!rompath12)
+			rompath12 = basic10rom;
+		if (!rompath16)
+			rompath16 = 0;
 		TICK_RATE = 3000000;
 		break;
 	case 2: /* BK0010.01+FDD */
@@ -310,6 +314,9 @@ char **argv;
 				break;
 			case 'm':
 				mouseflag = *(farg+1) ? *(farg+1)-'0' : 1;
+				break;
+			case 'P':
+				prompath = *++farg ? farg : (argc--,*++narg);
 				break;
 			case 'p':
 				plipflag = 1;
@@ -476,7 +483,8 @@ int flag;
 			case BUS_ERROR:			/* vector 4 */
 				ticks += 64;
 			case ODD_ADDRESS:
-				fprintf( stderr, _(" pc=%06o, last branch @ %06o\n"),
+				//fprintf( stderr, _(" pc=%06o, last branch @ %06o\n"),
+				fprintf( stderr, _(" pc=%04x, last branch @ %04x\n"),
 					oldpc, last_branch );
 				result2 = service( (d_word) 04 );
 				break;

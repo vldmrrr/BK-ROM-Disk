@@ -63,6 +63,15 @@ typedef unsigned short d_word;	/* data word (16 bit) */
 typedef unsigned char d_byte;	/* data byte (8 bit) */
 typedef unsigned char flag_t;	/* for boolean or small value flags */
 
+typedef struct {
+	c_addr start;
+	c_addr size;
+	int (*ifunc)();
+	int (*rfunc)(c_addr, d_word*);
+	int (*wfunc)(c_addr, d_word);
+	int (*bwfunc)(c_addr, d_byte);
+} pdp_qmap;
+
 /*
  * PDP processor defines.
  */
@@ -148,6 +157,7 @@ extern int mouse_init(), mouse_read(), mouse_write(c_addr, d_word), mouse_bwrite
 extern int covox_init(), covox_read(), covox_write(c_addr, d_word), covox_bwrite(c_addr, d_byte);
 extern int synth_init(), synth_read(), synth_write(c_addr, d_word), synth_bwrite(c_addr, d_byte), synth_next(void);
 extern int bkplip_init(), bkplip_read(), bkplip_write(c_addr, d_word), bkplip_bwrite(c_addr, d_byte);
+extern int prom_init(), prom_read(), prom_write(c_addr, d_word), prom_bwrite(c_addr, d_byte);
 extern int service(d_word);
 
 /*
@@ -187,7 +197,7 @@ extern pdp_regs pdp;
 extern event *event_list[NUM_PRI];
 extern char * printer_file;
 extern char * romdir;
-extern char * rompath10, *rompath12, *rompath16;
+extern char * rompath10, *rompath12, *rompath16, *prompath;
 extern char * bos11rom, * diskrom, * bos11extrom, * basic11arom, * basic11brom;
 extern int TICK_RATE;
 
