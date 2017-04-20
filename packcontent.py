@@ -121,11 +121,9 @@ def makeROM(items):
 	items['name']="BK011 Menu loader"
 	writeDir(items)
 	cmenu = compress(struct.pack('<H',items['ofs']) + gMenu)
-	wf('gmenu',struct.pack('<H',items['ofs']) + gMenu)
 	
 	fdata = struct.pack('<H',len(flist))+flist+finfo
 	cfdata = compress(fdata)
-	wf('fdata',fdata)
 	
 	with open(gOps.loaderPath,'rb') as f:
 		ldr = f.read()
@@ -186,7 +184,7 @@ def main():
 			with open(gOps.outputPath,'wb') as f:
 				f.write(rom)
 				if (free>0):
-					f.write("\x00"*free)
+					f.write("\xff"*free)
 			print "Done"
 			sys.exit(0)
 		print "Content have size %d b=ytes which exceeds specified ROM size by %d bytes"%(sz,free)
