@@ -1,0 +1,753 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2003-09-22 23:15+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: access.c:101
+#, c-format
+msgid "Illegal read address %06o:"
+msgstr ""
+
+#: access.c:136
+#, c-format
+msgid "Illegal write address %06o:"
+msgstr ""
+
+#: access.c:234
+#, c-format
+msgid "Illegal byte write address %06o:"
+msgstr ""
+
+#: access.c:304
+#, c-format
+msgid "Writing to ROM addr %06o:"
+msgstr ""
+
+#: access.c:309
+#, c-format
+msgid "Writing byte to ROM addr %06o:"
+msgstr ""
+
+#: boot.c:42 boot.c:67
+msgid "No memory\n"
+msgstr ""
+
+#: boot.c:50
+#, c-format
+msgid "Loading %s..."
+msgstr ""
+
+#: boot.c:54
+msgid "Couldn't open file.\n"
+msgstr ""
+
+#: boot.c:59 boot.c:71
+msgid "Incomplete or damaged file.\n"
+msgstr ""
+
+#: boot.c:80 sound.c:119
+msgid "Done.\n"
+msgstr ""
+
+#: disas.c:217
+#, c-format
+msgid "ERROR code %c"
+msgstr ""
+
+#: disk.c:49
+#, c-format
+msgid "%s will be read only\n"
+msgstr ""
+
+#: disk.c:146
+msgid "Reading 177130, returned 0\n"
+msgstr ""
+
+#: disk.c:162
+#, c-format
+msgid "Reading 177130 @%06o, returned %06o\n"
+msgstr ""
+
+#: disk.c:168
+#, c-format
+msgid "Reading 177132 @%06o, returned %06o\n"
+msgstr ""
+
+#: disk.c:172
+msgid "Reading 177132 when no I/O is progress?\n"
+msgstr ""
+
+#. Print a message if something other than turning
+#. * all drives off is requested
+#.
+#: disk.c:190
+#, c-format
+msgid "Writing 177130, data %06o\n"
+msgstr ""
+
+#: disk.c:206
+#, c-format
+msgid "Writing 177132, data %06o\n"
+msgstr ""
+
+#: disk.c:217
+#, c-format
+msgid "Writing byte 177130, data %03o\n"
+msgstr ""
+
+#: disk.c:220
+#, c-format
+msgid "Writing byte 177131, data %03o\n"
+msgstr ""
+
+#: disk.c:223
+#, c-format
+msgid "Writing byte 177132, data %03o\n"
+msgstr ""
+
+#: disk.c:226
+#, c-format
+msgid "Writing byte 177133, data %03o\n"
+msgstr ""
+
+#: disk.c:240
+#, c-format
+msgid "%s block %d (%d words) from drive %d @ addr %06o\n"
+msgstr ""
+
+#: disk.c:241
+msgid "Writing"
+msgstr ""
+
+#: disk.c:241
+msgid "Reading"
+msgstr ""
+
+#: disk.c:245
+msgid "Disk not ready\n"
+msgstr ""
+
+#: disk.c:247
+msgid "Block number too large\n"
+msgstr ""
+
+#: disk.c:255
+#, c-format
+msgid "Read failure @ %06o\n"
+msgstr ""
+
+#: disk.c:269
+#, c-format
+msgid "Write failure @ %06o\n"
+msgstr ""
+
+#: disk.c:279
+msgid "Done\n"
+msgstr ""
+
+#: io.c:128
+#, c-format
+msgid "Reading %06o\n"
+msgstr ""
+
+#: io.c:145
+#, c-format
+msgid "Writing %03o to %06o\n"
+msgstr ""
+
+#: main.c:93
+#, c-format
+msgid "Usage: %s [options]\n"
+msgstr ""
+
+#: main.c:94
+msgid "   -0        BK-0010 (Focal and tape)\n"
+msgstr ""
+
+#: main.c:95
+msgid "   -1        BK-0010.01 (Basic and tape)\n"
+msgstr ""
+
+#: main.c:96
+msgid "   -2        BK-0010.01+FDD (No basic, floppy)\n"
+msgstr ""
+
+#: main.c:97
+#, c-format
+msgid "   -A<file>  A: floppy image file or device (instead of %s)\n"
+msgstr ""
+
+#: main.c:98
+#, c-format
+msgid "   -B<file>  B: floppy image file or device (instead of %s)\n"
+msgstr ""
+
+#: main.c:99
+#, c-format
+msgid "   -C<file>  C: floppy image file or device (instead of %s)\n"
+msgstr ""
+
+#: main.c:100
+#, c-format
+msgid "   -D<file>  D: floppy image file or device (instead of %s)\n"
+msgstr ""
+
+#: main.c:101
+msgid "   -a        Do not boot automatically\n"
+msgstr ""
+
+#: main.c:102
+msgid "   -c        Color mode\n"
+msgstr ""
+
+#: main.c:103
+msgid "   -d        Double size mode\n"
+msgstr ""
+
+#: main.c:104
+msgid "   -n        Disable speaker\n"
+msgstr ""
+
+#: main.c:105
+msgid "   -m        Disable mouse\n"
+msgstr ""
+
+#: main.c:106
+msgid "   -f        Full speed mode\n"
+msgstr ""
+
+#: main.c:107
+msgid "   -R<file>  Specify an alternative ROM file @ 120000.\n"
+msgstr ""
+
+#: main.c:108
+msgid "   -r<file>  Specify an alternative ROM file @ 160000.\n"
+msgstr ""
+
+#: main.c:109
+msgid "   -T        Disable reading from tape\n"
+msgstr ""
+
+#: main.c:110
+msgid "   -t        Trace mode\n"
+msgstr ""
+
+#: main.c:111
+msgid "   -l<path>  Set printer pathname\n"
+msgstr ""
+
+#: main.c:112
+#, c-format
+msgid ""
+"\n"
+"The default ROM files are stored in\n"
+"%s or the directory specified\n"
+"by the environment variable BK_PATH.\n"
+msgstr ""
+
+#: main.c:116
+msgid ""
+"\n"
+"Examples:.\n"
+msgstr ""
+
+#: main.c:117
+msgid "   'bk -R./BK.ROM' - Use custom ROM\n"
+msgstr ""
+
+#: main.c:118
+msgid "   'bk -a -n -f'   - Developer's mode\n"
+msgstr ""
+
+#: main.c:119
+msgid ""
+"   'bk -c -D'      - Gaming mode\n"
+"\n"
+msgstr ""
+
+#. Unknown ROM configuration
+#: main.c:151
+msgid "Unknown BK model. Bailing out.\n"
+msgstr ""
+
+#: main.c:155
+msgid "Initializing SDL.\n"
+msgstr ""
+
+#: main.c:158
+#, c-format
+msgid "Could not initialize SDL: %s.\n"
+msgstr ""
+
+#: main.c:162
+msgid "SDL initialized.\n"
+msgstr ""
+
+#. initialize the tty stuff
+#. initialize the event system
+#. ...the simulated cpu
+#. ...main memory
+#. ...any devices
+#. let it be
+#: main.c:171
+msgid ""
+"Welcome to \"Elektronika BK\" emulator!\n"
+"\n"
+msgstr ""
+
+#: main.c:342
+#, c-format
+msgid "Instructions executed: %d\n"
+msgstr ""
+
+#: main.c:343
+#, c-format
+msgid "Simulation rate: %.5g instructions per second\n"
+msgstr ""
+
+#: main.c:345
+#, c-format
+msgid "BK-0010 speed: %.5g instructions per second\n"
+msgstr ""
+
+#: main.c:407
+#, c-format
+msgid " pc=%06o, last branch @ %06o\n"
+msgstr ""
+
+#: main.c:415
+#, c-format
+msgid "Illegal inst. %s, last branch @ %06o\n"
+msgstr ""
+
+#: main.c:446
+msgid ""
+"\n"
+"Unexpected return.\n"
+msgstr ""
+
+#: main.c:447
+#, c-format
+msgid "exec=%d pc=%06o ir=%06o\n"
+msgstr ""
+
+#: main.c:454 main.c:461
+#, c-format
+msgid ""
+"\n"
+"Double trap @ %06o.\n"
+msgstr ""
+
+#: main.c:502
+msgid ""
+"\n"
+"Execution interrupted.\n"
+msgstr ""
+
+#: main.c:545
+msgid "WAIT instruction\n"
+msgstr ""
+
+#: main.c:579
+msgid "Simulating tune-up sequence\n"
+msgstr ""
+
+#: main.c:583
+msgid "Simulating reading array with tune-up\n"
+msgstr ""
+
+#: main.c:599
+msgid ""
+"Emulator window hotkeys:\n"
+"\n"
+msgstr ""
+
+#: main.c:600
+msgid " ScrollLock - Toggle video mode (B/W, Color) and doublesized display\n"
+msgstr ""
+
+#: main.c:601
+msgid " Left Super+F11 - Reset emulated machine\n"
+msgstr ""
+
+#: main.c:602
+msgid ""
+" F12 - Load a file into BK memory\n"
+"\n"
+msgstr ""
+
+#: main.c:607
+msgid ""
+"BK0010 MONITOR (the OS) commands:\n"
+"\n"
+" 'A' to 'K' - Quit MONITOR.\n"
+" 'M' - Read from tape. Press 'Enter' and type in the filename of\n"
+"       the desired .bin snapshot. Wait until the data loads into\n"
+"       the memory or use F12 instead.\n"
+" 'S' - Start execution. You can specify an address to start from.\n"
+msgstr ""
+
+#: main.c:617
+msgid ""
+" 'T' - Run built-in tests.\n"
+"\n"
+msgstr ""
+
+#: main.c:618
+msgid "Type 'P M' to quit FOCAL and get the MONITOR prompt.\n"
+msgstr ""
+
+#: main.c:619
+msgid ""
+"Type 'P T' to enter the test mode. 1-5 selects a test.\n"
+"\n"
+msgstr ""
+
+#: main.c:623
+msgid ""
+"\n"
+"Type 'MO' to quit BASIC VILNIUS 1986 and get the MONITOR prompt.\n"
+"\n"
+msgstr ""
+
+#: main.c:627
+msgid ""
+"\n"
+"Type 'S160000' to boot from floppy A:.\n"
+msgstr ""
+
+#: main.c:628
+msgid ""
+"The BASIC ROM is disabled.\n"
+"\n"
+msgstr ""
+
+#: maketape.c:65
+msgid "Usage: maketape BK_NAME infile > outfile\n"
+msgstr ""
+
+#. checksum
+#: maketape.c:101
+#, c-format
+msgid "checksum = %06o\n"
+msgstr ""
+
+#: readtape.c:17
+msgid "Tape ended\n"
+msgstr ""
+
+#: readtape.c:69
+msgid "Found start tune-up sequence\n"
+msgstr ""
+
+#: readtape.c:80
+#, c-format
+msgid "Skipped %d strobes to find marker\n"
+msgstr ""
+
+#: readtape.c:82
+#, c-format
+msgid "Polarity set to %d\n"
+msgstr ""
+
+#: readtape.c:93
+#, c-format
+msgid "Threshold set to %d\n"
+msgstr ""
+
+#: readtape.c:112
+#, c-format
+msgid "Start address %06o, length %06o\n"
+msgstr ""
+
+#: readtape.c:116
+#, c-format
+msgid "File name: <% .16s>\n"
+msgstr ""
+
+#: readtape.c:126
+msgid "Failed\n"
+msgstr ""
+
+#: readtape.c:138
+#, c-format
+msgid "Checksum error: read %06o, computed %06o\n"
+msgstr ""
+
+#: readtape.c:142
+#, c-format
+msgid "Checksum = %06o\n"
+msgstr ""
+
+#: readtape.c:171
+msgid "False header marker\n"
+msgstr ""
+
+#: readtape.c:181
+#, c-format
+msgid "Too short (%d) assuming 0\n"
+msgstr ""
+
+#: readtape.c:182 readtape.c:187
+#, c-format
+msgid "Tape position %0o\n"
+msgstr ""
+
+#: readtape.c:186
+#, c-format
+msgid "Too long (%d), assuming 1\n"
+msgstr ""
+
+#: scr.c:56
+#, c-format
+msgid "Can't lock screen: %s\n"
+msgstr ""
+
+#: scr.c:133
+#, c-format
+msgid "Couldn't set up video: %s\n"
+msgstr ""
+
+#: scr.c:138
+msgid "BK-0010 Emulator"
+msgstr ""
+
+#: scr.c:138
+msgid "BK-0010"
+msgstr ""
+
+#: service.c:88
+msgid "ev_register(): no free events\n"
+msgstr ""
+
+#: sound.c:114
+msgid "sound_init called\n"
+msgstr ""
+
+#: sound.c:116
+msgid "Opening audio... "
+msgstr ""
+
+#: sound.c:127
+#, c-format
+msgid "Warning: %s doesn't support default sample rate of %d (set to %d)\n"
+msgstr ""
+
+#: sound.c:134
+msgid "/dev/dsp: setfragment failed"
+msgstr ""
+
+#: sound.c:140
+msgid "/dev/dsp: getbksize failed"
+msgstr ""
+
+#: sound.c:144
+#, c-format
+msgid "Warning: asked for sound delay 1/%d sec, got 1/%d sec\n"
+msgstr ""
+
+#: sound.c:152
+msgid "Warning: sound quality may be low\n"
+msgstr ""
+
+#: sound.c:159
+msgid "Failed to allocate sound buffers\n"
+msgstr ""
+
+#: tape.c:33
+msgid "readtape open successful\n"
+msgstr ""
+
+#: tape.c:51
+#, c-format
+msgid "Tape %s\n"
+msgstr ""
+
+#: tape.c:51
+msgid "OFF"
+msgstr ""
+
+#: tape.c:51
+msgid "ON"
+msgstr ""
+
+#: tape.c:99
+msgid "End of tape\n"
+msgstr ""
+
+#: tape.c:154
+#, c-format
+msgid "Calling (%s)\n"
+msgstr ""
+
+#: tape.c:168
+msgid "Closed maketape\n"
+msgstr ""
+
+#: tape.c:199
+#, c-format
+msgid "Will read unix file <%s> under BK name <%s>\n"
+msgstr ""
+
+#. We're not supposed to get here
+#: tape.c:209
+msgid "Asked for strobe in Idle state?\n"
+msgstr ""
+
+#: tape.c:220
+#, c-format
+msgid "File address will be %o\n"
+msgstr ""
+
+#: tape.c:233
+#, c-format
+msgid "File length will be %o\n"
+msgstr ""
+
+#: tape.c:264
+#, c-format
+msgid "Checksum will be %06o\n"
+msgstr ""
+
+#. 177710
+#: timer.c:54
+#, c-format
+msgid "Writing %06o to timer counter\n"
+msgstr ""
+
+#. 177710
+#. 177711
+#: timer.c:79
+#, c-format
+msgid "Writing %03o to timer counter\n"
+msgstr ""
+
+#: timer.c:125
+msgid "Setting unknown timer mode bits\n"
+msgstr ""
+
+#: timing.c:270
+#, c-format
+msgid "No timing for instr %06o\n"
+msgstr ""
+
+#: tty.c:202 tty.c:237
+msgid "Writing to kbd data register, "
+msgstr ""
+
+#: tty.c:301
+msgid "NAME? "
+msgstr ""
+
+#: tty.c:370
+#, c-format
+msgid "Unexpected event %d\n"
+msgstr ""
+
+#. show help
+#: ui.c:106
+msgid ""
+"\n"
+"Emulator shell commands:\n"
+"\n"
+msgstr ""
+
+#: ui.c:107
+msgid " 'd' - Dump memory ('d start end' or 'd start'\n"
+msgstr ""
+
+#: ui.c:108
+msgid " 'e' - Edit memory\n"
+msgstr ""
+
+#: ui.c:109
+msgid " 'g' - Start execution ('g' or 'g 100000' boots the BK0010 computer)\n"
+msgstr ""
+
+#: ui.c:110
+msgid " 'r' - Register dump\n"
+msgstr ""
+
+#: ui.c:111
+msgid " 's' - Execute a single instruction\n"
+msgstr ""
+
+#: ui.c:112
+msgid " 't' - Toggle trace flag\n"
+msgstr ""
+
+#: ui.c:113
+msgid " 'l' - Load file ('l filename.bin' loads specified file)\n"
+msgstr ""
+
+#: ui.c:114
+msgid " 'i' - Fire an interrupt\n"
+msgstr ""
+
+#: ui.c:115
+msgid " 'b' - Set a breakpoint\n"
+msgstr ""
+
+#: ui.c:116
+msgid " '?' - Emulator help\n"
+msgstr ""
+
+#: ui.c:117
+msgid " 'h' - Command help\n"
+msgstr ""
+
+#: ui.c:118
+msgid ""
+" 'q' - Quit\n"
+"\n"
+msgstr ""
+
+#. invalid command
+#: ui.c:124
+msgid "Invalid command, use d, e, g, r, s, t, l, i, b, q, ? and h for help\n"
+msgstr ""
+
+#. invalid   command
+#: ui.c:215 ui.c:222 ui.c:271 ui.c:312 ui.c:321 ui.c:344 ui.c:372
+msgid "Bad address\n"
+msgstr ""
+
+#: ui.c:315
+msgid "write error\n"
+msgstr ""
+
+#: ui.c:361
+msgid "Bad vector\n"
+msgstr ""
+
+#: ui.c:408
+msgid "LOAD called\n"
+msgstr ""
+
+#: ui.c:426
+#, c-format
+msgid "Reading %s into %06o... "
+msgstr ""
+
+#: ui.c:428
+msgid "Possible start addresses:  "
+msgstr ""
+
+#: ui.c:448
+#, c-format
+msgid ""
+"Done.\n"
+"Last filled address is %06o\n"
+msgstr ""
