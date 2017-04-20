@@ -31,10 +31,18 @@ BSSPOS	= BSSPOS+2
 	POP3
 	.endm
 	
+	.macro PUSH5
+	PUSH4
+	mov	r4,-(r6)
+	.endm
+	
+	.macro	POP5
+	mov	(r6)+,r4
+	POP4
+	.endm
+	
 	.bss
 	WORD pmenud		# pointer to menu data storage
-	WORD pcnt		# pointer to contents
-	WORD ocnt		# offset to contents from start of ROM
 
 	WORD pcmenu		# pointer to current menu
 	WORD nitems		# number of items in menu
@@ -69,9 +77,6 @@ start:	emt	014		# clear screen
 	add	r1,r0
 	mov	r0,@$pfinfo
 	jsr	pc,inflate
-	mov	r2,@$pcnt
-	sub	$0xa000,r2
-	mov	r2,@$ocnt
 	mov	@$pmenud,r0
 	add	-2(r0),r0	# offset to top level menu is in word before menu data buffer
 	
@@ -130,6 +135,7 @@ kent:	cmp	r0,$012
 	mov	r1,r0	# dir, open it
 	jsr	pc,setmn
 	br	mainl
+	
 1:	tstb	(r1)+		# file, load it
 	bne	1b
 	bit	$1,r1
@@ -138,6 +144,30 @@ kent:	cmp	r0,$012
 2:	mov	(r1)+,r4	# adr
 	mov	r4,@$0264
 	mov	(r1)+,@$0266	#size
+	jsr	pc,ldf
+
+	mov	@$030,@$8	# setup EMT handle
+	mov	$ROM+hemt,@$030
+	
+	mov	@$0264,r7
+
+kesc:	cmp	r0,$030
+	bne	mainl
+	mov	@$pmenud,r0	# just return to top for now
+	add	-2(r0),r0	# offset to top level menu is in word before menu data buffer	
+	jsr	pc,setmn
+	br 	mainl
+
+	
+	# reset current menu to addr in r0
+setmn:	mov	r0,@$pcmenu
+	clr	@$first
+	clr	@$sel
+	jsr	pc,pmenu
+	rts	pc
+	
+	# load file with info at (r1) into (r4)
+ldf:
 	mov	(r1)+,r2	#offset into content lo word
 	movb	(r1)+,r3	#offset into content hi byte
 	add	@$ocnt,r2	#offset into ROM lo word
@@ -163,25 +193,125 @@ kent:	cmp	r0,$012
 	add	$0xa000,r2
 	mov	$0x400,r3
 5:	jsr	pc,inflate
-	mov	@$0264,r7
-
-kesc:	cmp	r0,$030
-	bne	mainl
-	mov	@$pmenud,r0	# just return to top for now
-	add	-2(r0),r0	# offset to top level menu is in word before menu data buffer	
-	jsr	pc,setmn
-	br 	mainl
-
-	
-	# reset current menu to addr in r0
-setmn:	mov	r0,@$pcmenu
-	clr	@$first
-	clr	@$sel
-	jsr	pc,pmenu
 	rts	pc
-	
-done:	br	done
 
+	###############
+	# EMT handler #
+	###############
+hemt:	mov	r5,-(r6)
+	mov	2(r6),r5
+	mov	-(r5),r5
+	mov	$0x87,-(r6)	# put rst pc into next instruction
+	mov	r5,-(r6)	# create emt program on stack
+	mov	$ROM+hemtr,-(r6)# put return addr to our restore routine
+	cmpb	r5,$036		# is it tape command?
+	beq	tape
+hcnt:
+	mov	0,-(r6)	# return to us on rti
+	mov	r6,r5
+	add	$6,r5
+	mov	r5,-(r6)	# return to program on stack
+	mov	@$8,r7
+hcnt5:	POP5
+	br	hcnt
+	
+hemtr:	add	$4,r6	# pop program from stack
+	cmp	$ROM+hemt,@$030
+	beq	0f
+	mov	@$030,@$8	# restore overriten EMT handle
+	mov	$ROM+hemt,@$030
+0:	mov	(r6)+,r5	
+	rti
+	
+tape:	cmpb	(r1),$3		# load command?
+	bne	hcnt
+	PUSH5
+	mov	2(r1),r4
+	tst	r4
+	bne	0f
+	mov	0x4000,r4
+0:	mov	$data,r2
+	mov	$5,r3		#page
+	mov	r4,-(r6)
+	jsr	pc,inflate
+	mov	(r6)+,r4
+	mov	(r4)+,r5
+	add	r4,r5		# file info ptr
+	mov	r5,-(r6)	# keep it on stack
+	sub	$2,r5		# r4 - start, r5 - end of file list
+	
+	mov	8(r6),r1	# ptr to cmd block
+	mov	r1,r2
+	add	$6,r2		# ptr to filename
+	mov	r1,r0
+	add	$23,r0		# ptr to byte after filename
+1:	movb	$0,(r0)		# make name c-string
+	cmpb	-(r0),$0x20	# filename i spadded by spaces
+	bne	nxtf
+	cmp	r0,r2
+	bne	1b
+	
+nxtf:	mov	r5,r2		# compare fname with file record between r4 & r5
+	sub	r4,r2
+	bge	0f
+	mov	(r6)+,r5
+	br	hcnt5		# file not found
+0:	asr	r2
+	bic	$1,r2
+	add	r4,r2
+	mov	r2,r3		# save middle pointer
+	mov	(r2),r2
+	add	(r6),r2		# ptr to file info
+	mov	8(r6),r0	# r1 from stack
+	add	$6,r0		# ptr to filename
+	mov	$17,r1		# max length including trailing 0
+	jsr	pc,scmp
+	beq	2f		# found it
+	bgt	1f
+	sub	$2,r3
+	mov	r3,r5
+	br	nxtf
+1:	add	$2,r3
+	mov	r3,r4
+	br	nxtf
+	
+2:	mov	r2,r1
+	bit	$1,r1		# word align
+	beq	3f
+	inc	r1
+3:	mov	2(r1),r4
+	mov	r4,@$0266	# size
+	mov	8(r6),r0	# r1 from stack
+	mov	r4,4(r0)
+	mov	2(r0),r4	# destination
+	tst	r4
+	bne	4f
+	mov	(r1),r4		# dest. from file header
+4:	mov	r4,@$0264
+	add	$4,r1
+	jsr	pc,ldf
+	mov	(r6)+,r5	
+	POP5
+	rts	pc		#return through emtr
+	
+	
+	# compare c strings pointed by r0 and r2, r1 - max length
+	# on exit Z and N set to result
+	# r0 and r2 points past last character
+scmp:	tst	r1
+	beq	xscmp
+	tstb	(r0)
+	bne	1f
+	tstb	(r2)
+	beq	xscmp
+	sen
+xscmp:	rts	pc
+1:	cmpb	(r0)+,(r2)+
+	bne	xscmp
+	dec	r1
+	br	scmp
+	
+	
 	# print menu screen for menu pointed by pcmenu
 	# also init menu values
 pmenu:	jsr	pc,cls
@@ -410,7 +540,6 @@ getbyte:movb	(r2)+,r0
 	mov	$0xe000,r2
 1:	rts pc
 	.even
+ocnt	= .+ROM		# offset to contents from start of ROM
+data	= ocnt+2	# start of data
 
-data	= .+ROM		# start of data
-pcfdl	= data		# pointer to compressed file data
-pcfd	= pcfdl+2	# pointer to compressed file data

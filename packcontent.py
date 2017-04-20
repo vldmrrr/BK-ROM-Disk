@@ -69,7 +69,9 @@ def processDir(path):
 			except:
 				exit("Error while processing %s: %s"%(ipath,traceback.format_exc()))
 		if os.path.isdir(ipath):
-			menu['dirs'].append(processDir(ipath))
+			dmenu = processDir(ipath)
+			if os.path.basename(ipath)[0] != '.': # do not show hidden dirs in menu
+				menu['dirs'].append(dmenu)
 	menu['name']=koi(os.path.basename(path))
 	return menu
 
@@ -127,7 +129,7 @@ def makeROM(items):
 	
 	with open(gOps.loaderPath,'rb') as f:
 		ldr = f.read()
-	rom = ldr+cfdata+cmenu+content
+	rom = pad(ldr)+struct.pack('<H',len(ldr)+2+len(cfdata)+len(cmenu)) + cfdata+cmenu+content
 	return rom
 
 
@@ -136,7 +138,7 @@ def main():
 	parser = optparse.OptionParser(usage)
 	
 	parser.add_option("-s", "--size", dest="maxsize",
-		default=256,
+		default=1024,
 		help="Maximum size of created file in KBytes (default: %default)")
 	parser.add_option("-l", "--loader", dest="loaderPath",
 		default="./menuloader",
