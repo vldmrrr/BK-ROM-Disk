@@ -3,7 +3,13 @@ content/**
 files/**
 *.ls
 *.map
+*.log
 ROM.bin
 menuloader
 megalz
+emulator/bk
+emulator/everything
+emulator/maketape
+emulator/pngtorgba
+emulator/readtape
 
