@@ -94,8 +94,11 @@ kup:	cmp	r0,$032
 	cmp	r0,@$first
 	bge	0f
 	mov	r0,@$first
-	jsr	pc,pmenu
-	br	mainl
+	mov	$022,r0
+	emt	016
+	mov	$024,r0		# scroll down
+	emt	016
+	mov	@$sel,r0	# fall through
 0:	jsr	pc,getly
 	jsr	pc,pline
 	inc	r0
@@ -117,8 +120,11 @@ kdown:	cmp	r0,$033
 	cmp	r0,r1
 	ble	1f
 	inc	@$first
-	jsr	pc,pmenu
-	br	mainl
+	mov	$022,r0
+	emt	016
+	mov	$023,r0		# scroll up
+	emt	016
+	mov	@$sel,r0	# fall through
 1:	jsr	pc,getly
 	jsr	pc,pline
 	dec	r0
@@ -359,7 +365,7 @@ pline:	PUSH3
 	jsr	pc,getla
 	cmp	r1,@$pmenud	# file or dir?
 	blt	1f	
-	movb	$255,@$044	# dir, unerline it
+	movb	$255,@$044	# dir, underline it
 	br	2f
 1:	movb	$0,@$044	# file, remove underlining
 2:	emt	020
