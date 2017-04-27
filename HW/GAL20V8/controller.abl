@@ -1,0 +1,45 @@
+MODULE controller
+
+TITLE 'Drive bus control signals'
+
+SYNC PIN 1;
+
+DA9..DA15 PIN 2..8;
+AIN=[DA9..DA11];
+PADR = [DA15..DA12];
+
+!DIN PIN 9;
+_DOUT PIN 10;
+_SYNC PIN 11;
+
+A8..A10 PIN 15..17 istype 'reg, buffer';
+AOUT=[A8..A10];
+
+!PAGEDSEL PIN 18 istype 'reg';
+!CHIPSEL PIN 19 istype 'reg';
+
+!RPLY PIN 20 istype 'com';
+
+OSYNC PIN 21 istype 'com';
+ODOUT PIN 22 istype 'com';
+
+equations
+
+OSYNC = !_SYNC;
+ODOUT = !_DOUT;
+
+AOUT.clk = SYNC;
+AOUT:=AIN;
+
+
+PAGEDSEL := PADR == ^h0B;
+PAGEDSEL.clk = SYNC;
+
+CHIPSEL := PADR == ^h0A # PADR == ^h0B;
+CHIPSEL.clk = SYNC;
+
+"ROMOE=CHIPSEL & DIN;
+RPLY=CHIPSEL & (DIN#!_DOUT);
+
+END
+

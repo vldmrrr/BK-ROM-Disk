@@ -1,0 +1,48 @@
+Signal	XT3	D1 GAL CTR	D2 GAL HI	D3 GAL LO	D4 ROM M27C800
++5V	A4	24		24		24		23,30
+GND	x2,x3	12,13		12		12,13		12,31
+DA0	A31							14					
+DA1	B31					2		16
+DA2	B29					3		18
+DA3	B30					4		20
+DA4	B28					5		23
+DA5	A28					6		25
+DA6	B27					7		27
+DA7	B32					8		29
+DA8	B26			2		9		15
+DA9	A27	2		3				17
+DA10	B25	3		4				19
+DA11	A26	4		5				21
+DA12	B24	5		6				24
+DA13	A25	6		7				26
+DA14	B23	7		8				28
+DA15	B7	8		9				30
+SYNC	B22	11
+RPLY	B20	20
+INIT	B19
+DOUT	B21	10
+DIN	A23	9						13(G_)
+EXTROM	A14
+_SYNC		1,21				1
+_DOUT		22		1
+A0						15		10
+A1						16		9
+A2						17		8
+A3						18		7
+A4						19		6
+A5						20		5
+A6						21		4
+A7						22		3
+A8		15						41
+A9		16						40
+A10		17						39
+A11				15				38
+A12				16				37
+A13				17				36
+A14				18				35
+A15				19				34
+A16				20				33
+A17				21				2
+A18				22				1
+PAGED_		18		13,14
+CHIPSEL_	19						11(E_)

@@ -1,0 +1,29 @@
+MODULE hi_adr
+
+TITLE 'High 8 bits of address bus'
+
+DOUT PIN 1;
+
+DA8..DA15 PIN 2..9;
+AIN=[DA15..DA8];
+HADR = [DA15..DA12];
+
+!PAGED_OE PIN 13;
+!PAGEDSEL PIN 14;
+
+A11..A18 PIN 15..22 istype 'reg,buffer';
+APAGEDOUT=[A18..A11];
+
+equations
+
+WHEN PAGEDSEL THEN {
+    APAGEDOUT := AIN;
+} ELSE {
+    APAGEDOUT := APAGEDOUT;
+}
+
+APAGEDOUT.clk = DOUT;
+APAGEDOUT.oe = PAGED_OE;
+
+END
+

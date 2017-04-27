@@ -1,0 +1,19 @@
+MODULE lo_adr
+
+TITLE 'Low 8 bits of address'
+
+SYNC PIN 1;
+DA1..DA8 PIN 2..9;
+AIN=[DA1..DA8];
+
+A0..A7 PIN 15..22 istype 'reg,buffer';
+AOUT=[A0..A7];
+
+equations
+
+AOUT.clk = SYNC;
+AOUT:=AIN;
+
+
+END
+

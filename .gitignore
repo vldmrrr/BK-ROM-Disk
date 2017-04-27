@@ -4,8 +4,17 @@ files/**
 *.ls
 *.map
 *.log
+*.tmp
+*.err
+HW/**/*.bl?
+HW/**/*.fit
+HW/**/*.rpt
+HW/**/*.tt?
+HW/**/*.xrf
+HW/**/*.env
 ROM.bin
 menuloader
+megalz
 emulator/bk
 emulator/everything
 emulator/maketape
