@@ -10,9 +10,9 @@
 #include "defines.h"
 
 #define PROM_START 0xa000 /* Start address where 0 page is mapped permanently */
-#define PROM_BF 0xe000 /* Address of paged memory */
+#define PROM_BF 0xb000 /* Address of paged memory */
 #define PROM_PAGE 0x1000 /* Size of paged memory */
-#define PROM_LENGTH 0x5000 /* Total length of PROM address space */ 
+#define PROM_LENGTH 0x2000 /* Total length of PROM address space */ 
 
 pdp_qmap q_prom = {
 	PROM_START, PROM_LENGTH/2, prom_init, prom_read, prom_write, prom_bwrite

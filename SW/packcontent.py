@@ -52,7 +52,7 @@ def processFile(fpath):
 		res = processTape(cnt)
 		res['type']='i'
 		
-	res['name'] = koi(name)
+	res['name'] = koi(os.path.basename(fpath))
 	print '%5d %5d %s'%(res['size'],len(res['cnt']),fpath)
 	return res
 

@@ -1,5 +1,7 @@
 	RAM=01000
-	ROM=0120000
+	ROM=0xa000
+	PAGED=0xb000
+	PAGE=0x1000
 	
 	.macro WORD sym
 	.ifndef BSSPOS
@@ -63,7 +65,7 @@ start:	emt	014		# clear screen
 	movb	255,@$056	# hide cursor
 	jsr	pc,cls
 	mov	$data,r2
-	mov	$5,r3		#page
+	mov	$1,r3		#page
 	mov	$pfinfo,r4
 	jsr	pc,inflate
 	bit	$1,r4
@@ -185,9 +187,9 @@ ldf:
 	sob	r5,3b
 	swab	r3		#page in hi byte
 	bic	$0xf000,r2	#offset into page
-	cmp	r3,$0x400
+	cmp	r3,$0x100
 	ble	4f
-	bis	$0xe000,r2	#address
+	bis	$PAGED,r2	#address
 	mov	r3,@$ROM
 	br	5f
 4:	mov	r3,r0
@@ -197,7 +199,7 @@ ldf:
 	asl	r0
 	add	r0,r2
 	add	$0xa000,r2
-	mov	$0x400,r3
+	mov	$0x100,r3
 5:	jsr	pc,inflate
 	rts	pc
 
@@ -237,7 +239,7 @@ tape:	cmpb	(r1),$3		# load command?
 	bne	0f
 	mov	0x4000,r4
 0:	mov	$data,r2
-	mov	$5,r3		#page
+	mov	$1,r3		#page
 	mov	r4,-(r6)
 	jsr	pc,inflate
 	mov	(r6)+,r4
@@ -250,7 +252,7 @@ tape:	cmpb	(r1),$3		# load command?
 	mov	r1,r2
 	add	$6,r2		# ptr to filename
 	mov	r1,r0
-	add	$23,r0		# ptr to byte after filename
+	add	$22,r0		# ptr to byte after filename
 1:	movb	$0,(r0)		# make name c-string
 	cmpb	-(r0),$0x20	# filename i spadded by spaces
 	bne	nxtf
@@ -273,7 +275,7 @@ nxtf:	mov	r5,r2		# compare fname with file record between r4 & r5
 	mov	$17,r1		# max length including trailing 0
 	jsr	pc,scmp
 	beq	2f		# found it
-	bgt	1f
+	bhi	1f
 	sub	$2,r3
 	mov	r3,r5
 	br	nxtf
@@ -281,7 +283,10 @@ nxtf:	mov	r5,r2		# compare fname with file record between r4 & r5
 	mov	r3,r4
 	br	nxtf
 	
-2:	mov	r2,r1
+2:	tst	r1		# are characters left?
+	beq	0f
+	inc	r2
+0:	mov	r2,r1
 	bit	$1,r1		# word align
 	beq	3f
 	inc	r1
@@ -539,11 +544,11 @@ getbits:clr	r0
 	rts	pc
 	
 getbyte:movb	(r2)+,r0
-	cmp	r2,$0xf000 #check if end of page
+	cmp	r2,$(PAGED+PAGE) #check if end of page
 	bne	1f
 	add	$0x100,r3
 	mov	r3,@$ROM
-	mov	$0xe000,r2
+	mov	$PAGED,r2
 1:	rts pc
 	.even
 ocnt	= .+ROM		# offset to contents from start of ROM

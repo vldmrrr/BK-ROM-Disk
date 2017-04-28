@@ -1,5 +1,5 @@
 *.o
-content/**
+SW/content/**
 files/**
 *.ls
 *.map
@@ -12,12 +12,12 @@ HW/**/*.rpt
 HW/**/*.tt?
 HW/**/*.xrf
 HW/**/*.env
-ROM.bin
-menuloader
-megalz
-emulator/bk
-emulator/everything
-emulator/maketape
-emulator/pngtorgba
-emulator/readtape
+SW/ROM.bin
+SW/menuloader
+SW/megalz
+SW/emulator/bk
+SW/emulator/everything
+SW/emulator/maketape
+SW/emulator/pngtorgba
+SW/emulator/readtape
 

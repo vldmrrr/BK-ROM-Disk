@@ -9,7 +9,7 @@ OBJ = $(patsubst %.mac,%.o,$(SOURCES))
 
 ROM.bin: menuloader packcontent.py megalz
 	#dd if=/dev/null of=menuloader bs=1 count=0 seek=24576
-	./packcontent.py
+	python ./packcontent.py
 	
 menuloader: $(OBJ) Linker.Script Makefile
 	$(LD) -T Linker.Script $< -o $@ -Map=$@.map
