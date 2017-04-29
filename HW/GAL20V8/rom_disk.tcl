@@ -364,3 +364,83 @@ if [runCmd "\"$cpld_bin/fuseasm\" rom_disk.tt3 -dev p20v8 -o rom_disk.jed -ivec 
 
 ########## Tcl recorder end at 04/26/17 22:13:04 ###########
 
+
+########## Tcl recorder starts at 04/29/17 17:07:10 ##########
+
+# Commands to make the Process: 
+# Hierarchy
+if [runCmd "\"$cpld_bin/ahdl2blf\" \"controller.abl\" -ojhd only -def _PLSI_ _LATTICE_ -err automake.err "] {
+	return
+} else {
+	vwait done
+	if [checkResult $done] {
+		return
+	}
+}
+
+########## Tcl recorder end at 04/29/17 17:07:10 ###########
+
+
+########## Tcl recorder starts at 04/29/17 17:09:03 ##########
+
+# Commands to make the Process: 
+# JEDEC File
+if [runCmd "\"$cpld_bin/ahdl2blf\" \"controller.abl\" -mod controller -ojhd compile -def _PLSI_ _LATTICE_  -err automake.err "] {
+	return
+} else {
+	vwait done
+	if [checkResult $done] {
+		return
+	}
+}
+if [runCmd "\"$cpld_bin/iblifopt\" \"controller.bl0\" -red bypin choose -collapse -pterms 8 -family -err automake.err "] {
+	return
+} else {
+	vwait done
+	if [checkResult $done] {
+		return
+	}
+}
+if [runCmd "\"$cpld_bin/iblflink\" \"controller.bl1\" -o \"rom_disk.bl2\" -omod controller -family -err automake.err "] {
+	return
+} else {
+	vwait done
+	if [checkResult $done] {
+		return
+	}
+}
+if [runCmd "\"$cpld_bin/iblifopt\" rom_disk.bl2 -red bypin choose -sweep -collapse all -pterms 8 -err automake.err "] {
+	return
+} else {
+	vwait done
+	if [checkResult $done] {
+		return
+	}
+}
+if [runCmd "\"$cpld_bin/idiofft\" rom_disk.bl3 -pla -o rom_disk.tt2 -dev p20v8 -define N -err automake.err "] {
+	return
+} else {
+	vwait done
+	if [checkResult $done] {
+		return
+	}
+}
+if [runCmd "\"$cpld_bin/fit\" rom_disk.tt2 -dev p20v8 -str -err automake.err "] {
+	return
+} else {
+	vwait done
+	if [checkResult $done] {
+		return
+	}
+}
+if [runCmd "\"$cpld_bin/fuseasm\" rom_disk.tt3 -dev p20v8 -o rom_disk.jed -ivec NoInput.tmv -rep rom_disk.rpt -doc brief -con ptblown -for brief -err automake.err "] {
+	return
+} else {
+	vwait done
+	if [checkResult $done] {
+		return
+	}
+}
+
+########## Tcl recorder end at 04/29/17 17:09:03 ###########
+

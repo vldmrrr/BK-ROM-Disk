@@ -35,7 +35,7 @@ AOUT:=AIN;
 PAGEDSEL := PADR == ^h0B;
 PAGEDSEL.clk = SYNC;
 
-CHIPSEL := PADR == ^h0A # PADR == ^h0B;
+CHIPSEL := PADR == !^h0A # PADR == !^h0B;
 CHIPSEL.clk = SYNC;
 
 "ROMOE=CHIPSEL & DIN;
